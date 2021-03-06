@@ -702,7 +702,7 @@ extension GutenbergViewController: GutenbergBridgeDelegate {
     }
 
     func showEditor(files: [MediaFile]) throws {
-        storyEditor = try StoryEditor.editor(post: post, mediaFiles: files, publishOnCompletion: false, updated: { [weak self] result in
+        storyEditor = StoryEditor.editor(post: post, mediaFiles: files, publishOnCompletion: false, updated: { [weak self] result in
             switch result {
             case .success:
                 self?.dismiss(animated: true, completion: nil)

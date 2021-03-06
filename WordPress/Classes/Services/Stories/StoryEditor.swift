@@ -85,6 +85,7 @@ class StoryEditor: CameraController {
         settings.animateEditorControls = false
         settings.exportStopMotionPhotoAsVideo = false
         settings.fontSelectorUsesFont = true
+        settings.aspectRatio = 9/16
 
         return settings
     }
@@ -98,20 +99,16 @@ class StoryEditor: CameraController {
     static func editor(blog: Blog,
                        context: NSManagedObjectContext,
                        updated: @escaping (Results) -> Void,
-                       uploaded: @escaping (Results) -> Void) throws -> StoryEditor {
+                       uploaded: @escaping (Results) -> Void) -> StoryEditor {
         let post = PostService(managedObjectContext: context).createDraftPost(for: blog)
-        return try editor(post: post, mediaFiles: nil, publishOnCompletion: true, updated: updated, uploaded: uploaded)
+        return editor(post: post, mediaFiles: nil, publishOnCompletion: true, updated: updated, uploaded: uploaded)
     }
 
     static func editor(post: AbstractPost,
                        mediaFiles: [MediaFile]?,
                        publishOnCompletion: Bool = false,
                        updated: @escaping (Results) -> Void,
-                       uploaded: @escaping (Results) -> Void) throws -> StoryEditor {
-
-        guard !UIDevice.isPad() else {
-            throw EditorCreationError.unsupportedDevice
-        }
+                       uploaded: @escaping (Results) -> Void) -> StoryEditor {
 
         let controller = StoryEditor(post: post,
                                      onClose: nil,
@@ -240,7 +237,7 @@ extension StoryEditor: PublishingEditor {
     }
 
     var prepublishingSourceView: UIView? {
-        return nil
+        return super.confirmButton
     }
 
     var alertBarButtonItem: UIBarButtonItem? {

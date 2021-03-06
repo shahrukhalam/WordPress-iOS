@@ -178,6 +178,10 @@ private extension PHAsset {
         options.deliveryMode = .opportunistic
         options.resizeMode = .fast
         options.isNetworkAccessAllowed = true
+        var size = size
+        if size == .zero {
+            size = CGSize(width: pixelWidth, height: pixelHeight)
+        }
         PHImageManager.default().requestImage(for: self, targetSize: size, contentMode: .aspectFit, options: options, resultHandler: { (result, info) in
             let error = info?[PHImageErrorKey] as? Error
             let cancelled = info?[PHImageCancelledKey] as? Bool
@@ -216,16 +220,19 @@ extension WPMediaAsset {
     /// - Returns: A Publisher containing resuling image, URL and any errors during export.
     func imagePublisher() -> AnyPublisher<(UIImage, URL?), Error> {
         return Future<(UIImage, URL?), Error> { promise in
-            let size = self.fit(size: UIScreen.main.nativeBounds.size)
-            self.sizedImage(with: size) { (image, error) in
-                guard let image = image else {
-                    if let error = error {
-                        return promise(.failure(error))
-                    }
-                    return promise(.failure(WPMediaAssetError.imageAssetExportFailed))
-                }
-                return promise(.success((image, nil)))
-            }
+//            let size = self.fit(size: UIScreen.main.nativeBounds.size)
+//            self.sizedImage(with: size) { (image, error) in
+//                guard let image = image else {
+//                    if let error = error {
+//                        return promise(.failure(error))
+//                    }
+//                    return promise(.failure(WPMediaAssetError.imageAssetExportFailed))
+//                }
+//                return promise(.success((image, nil)))
+//            }
+            self.sizedImage(with: .zero, completionHandler: { image, error in
+                return promise(.success((image!, nil)))
+            })
         }.eraseToAnyPublisher()
     }
 
